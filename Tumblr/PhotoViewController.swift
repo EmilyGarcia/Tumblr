@@ -8,13 +8,27 @@
 
 import UIKit
 
-class PhotoViewController: UIViewController {
-
+class PhotoViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
+    
+    @IBOutlet weak var tableView: UITableView!
+    
     var posts: [[String: Any]] = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        tableView.delegate = self
+        tableView.dataSource = self
         fetchImages()
+    }
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return posts.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = UITableViewCell()
+        cell.textLabel?.text = "This is row \(indexPath.row)"
+        return cell
     }
 
     func fetchImages(){
@@ -29,6 +43,7 @@ class PhotoViewController: UIViewController {
                 let dataDictionary = try! JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
                 // Get the dictionary from the response key
                 let responseDictionary = dataDictionary["response"] as! [String: Any]
+                print(responseDictionary)
                 // Get the posts and store in posts property
                 self.posts = responseDictionary["posts"] as! [[String: Any]]
                 // TODO: Reload the table view
